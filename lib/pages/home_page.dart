@@ -47,54 +47,23 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<int> getNumberMandarina() async {
+    return Future.delayed(Duration(seconds: 3),(){
+      return 100;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder(
-          future: getName(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            print(snapshot.connectionState);
-            print(snapshot.hasData);
-            print(snapshot.data);
-
-            if (snapshot.hasData) {
+          future: getNumberMandarina(),
+          builder: (BuildContext context, AsyncSnapshot snap) {
+            if (snap.hasData) {
+              int numero = snap.data;
               return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "El cliente ${snapshot.data} tiene los siguientes productos:",
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    FutureBuilder(
-                      future: getProducts(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.hasData) {
-                          List<String> lista = snapshot.data;
-                          print(lista);
-                          return ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: lista.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                title: Text(
-                                  lista[index],
-                                ),
-                              );
-                            },
-                          );
-                        }
-                        return Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                child: Text("$numero"),
               );
             }
             return Center(
