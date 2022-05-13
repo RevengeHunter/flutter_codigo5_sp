@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,7 +14,8 @@ class _HomePageState extends State<HomePage> {
   @override
   initState() {
     super.initState();
-    getData();
+    // getData();
+    _getDataFull();
   }
 
   /*Obteniendo el valor de la funcion asincrona*/
@@ -53,6 +55,34 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  TextEditingController _txtFullName = TextEditingController();
+  TextEditingController _txtAddress = TextEditingController();
+
+  bool darkMode = false;
+  int valueGender = 1;
+
+  String fullNameSaved = "";
+  String fullAddressSaved = "";
+
+  _saveData() async {
+    SharedPreferences prefers = await SharedPreferences.getInstance();
+    prefers.setString("name", _txtFullName.text);
+    prefers.setString("address", _txtAddress.text);
+    prefers.setBool("darkMode", darkMode);
+    prefers.setInt("gender", valueGender);
+  }
+
+  _getDataFull() async {
+    SharedPreferences prefers = await SharedPreferences.getInstance();
+    _txtFullName.text = prefers.getString("name") ?? '-';
+    _txtAddress.text = prefers.getString("address") ?? '-';
+    fullNameSaved = prefers.getString("name") ?? '-';
+    fullAddressSaved = prefers.getString("address") ?? '-';
+    darkMode = prefers.getBool("darkMode") ?? true;
+    valueGender = prefers.getInt("gender") ?? 1;
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,41 +104,41 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               child: Container(
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CircleAvatar(
-                          radius: 40.0,
-                          foregroundImage: NetworkImage(
-                            "https://images.pexels.com/photos/320014/pexels-photo-320014.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8.0,
-                        ),
-                        Text(
-                          "Pedro Catbell",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 4.0,
-                        ),
-                        Text(
-                          "Administrador",
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.white70,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      radius: 40.0,
+                      foregroundImage: NetworkImage(
+                        "https://images.pexels.com/photos/320014/pexels-photo-320014.jpeg?auto=compress&cs=tinysrgb&h=650&w=940",
+                      ),
                     ),
-                  ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    Text(
+                      fullNameSaved,
+                      style: TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 4.0,
+                    ),
+                    Text(
+                      fullAddressSaved,
+                      style: TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
             ListTile(
               leading: Icon(Icons.person),
@@ -122,12 +152,123 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.lock),
               title: Text("Change Password"),
             ),
-            Divider(thickness: 0.6,indent: 22,endIndent: 22,),
+            Divider(
+              thickness: 0.6,
+              indent: 22,
+              endIndent: 22,
+            ),
             ListTile(
-              leading: Icon(Icons.exit_to_app,),
+              leading: Icon(
+                Icons.exit_to_app,
+              ),
               title: Text("Log Out"),
             ),
           ],
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Settings",
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xff424242),
+                ),
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              TextField(
+                controller: _txtFullName,
+                decoration: InputDecoration(
+                  hintText: "Full Name",
+                ),
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              TextField(
+                controller: _txtAddress,
+                decoration: InputDecoration(hintText: "Address"),
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              // Switch(
+              //   value: true,
+              //   onChanged: (bool value) {},
+              // ),
+              SwitchListTile(
+                title: Text(
+                  "Dark Mode",
+                ),
+                value: darkMode,
+                onChanged: (bool value) {
+                  darkMode = value;
+                  setState(() {});
+                },
+              ),
+              /*En el radio el value y el groupValue debe coincidir*/
+              // Radio(
+              //   value: 2,
+              //   groupValue: 1,
+              //   onChanged: (value) {
+              //     print(value.toString());
+              //   },
+              // ),
+              Text("Gender",style: TextStyle(fontSize: 18.0,),),
+              RadioListTile(
+                title: Text("Male",),
+                value: 1,
+                groupValue: valueGender,
+                onChanged: (int? value) {
+                  valueGender = value!;
+                  setState(() {
+
+                  });
+                },
+              ),
+              RadioListTile(
+                title: Text("Female",),
+                value: 2,
+                groupValue: valueGender,
+                onChanged: (int? value) {
+                  valueGender = value!;
+                  setState(() {
+
+                  });
+                },
+              ),
+              const SizedBox(
+                height: 20.0,
+              ),
+              SizedBox(
+                width: double.infinity,
+                height: 50.0,
+                child: ElevatedButton.icon(
+                  icon: Icon(Icons.save),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    primary: Colors.black87,
+                  ),
+                  onPressed: () {
+                    _saveData();
+                    setState(() {});
+                  },
+                  label: const Text(
+                    "Save Data",
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
