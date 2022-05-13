@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_codigo5_sp/pages/profile_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_codigo5_sp/utils/sp_global.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -62,26 +62,38 @@ class _HomePageState extends State<HomePage> {
   bool darkMode = false;
   int valueGender = 1;
 
+  SPGlobal spGlobal = SPGlobal();
+
   String fullNameSaved = "";
   String fullAddressSaved = "";
 
-  _saveData() async {
-    SharedPreferences prefers = await SharedPreferences.getInstance();
-    prefers.setString("name", _txtFullName.text);
-    prefers.setString("address", _txtAddress.text);
-    prefers.setBool("darkMode", darkMode);
-    prefers.setInt("gender", valueGender);
-    setState(() {});
+  _saveData() {
+    // SharedPreferences prefers = await SharedPreferences.getInstance();
+    // prefers.setString("name", _txtFullName.text);
+    // prefers.setString("address", _txtAddress.text);
+    // prefers.setBool("darkMode", darkMode);
+    // prefers.setInt("gender", valueGender);
+
+    spGlobal.fullName = _txtFullName.text;
+    spGlobal.address = _txtAddress.text;
+    spGlobal.darkMode = darkMode;
+    spGlobal.gender = valueGender;
+
+    //6setState(() {});
   }
 
-  Future<void> _getDataFull() async {
-    SharedPreferences prefers = await SharedPreferences.getInstance();
-    _txtFullName.text = prefers.getString("name") ?? '-';
-    _txtAddress.text = prefers.getString("address") ?? '-';
-    fullNameSaved = prefers.getString("name") ?? '-';
-    fullAddressSaved = prefers.getString("address") ?? '-';
-    darkMode = prefers.getBool("darkMode") ?? true;
-    valueGender = prefers.getInt("gender") ?? 1;
+  _getDataFull() {
+    // SharedPreferences prefers = await SharedPreferences.getInstance();
+    // _txtFullName.text = prefers.getString("name") ?? '-';
+    // _txtAddress.text = prefers.getString("address") ?? '-';
+    // fullNameSaved = prefers.getString("name") ?? '-';
+    // fullAddressSaved = prefers.getString("address") ?? '-';
+    // darkMode = prefers.getBool("darkMode") ?? true;
+    // valueGender = prefers.getInt("gender") ?? 1;
+
+    _txtFullName.text = spGlobal.fullName;
+    _txtAddress.text = spGlobal.address;
+
     setState(() {});
   }
 
@@ -120,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                       height: 8.0,
                     ),
                     Text(
-                      fullNameSaved,
+                      spGlobal.fullName,
                       style: TextStyle(
                         fontSize: 20.0,
                         color: Colors.white,
@@ -131,7 +143,7 @@ class _HomePageState extends State<HomePage> {
                       height: 4.0,
                     ),
                     Text(
-                      fullAddressSaved,
+                      spGlobal.address,
                       style: TextStyle(
                         fontSize: 14.0,
                         color: Colors.white70,
@@ -265,6 +277,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   onPressed: () {
                     _saveData();
+                    print("guardando");
                     setState(() {});
                   },
                   label: const Text(
