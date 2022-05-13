@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_codigo5_sp/pages/profile_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -70,9 +71,10 @@ class _HomePageState extends State<HomePage> {
     prefers.setString("address", _txtAddress.text);
     prefers.setBool("darkMode", darkMode);
     prefers.setInt("gender", valueGender);
+    setState(() {});
   }
 
-  _getDataFull() async {
+  Future<void> _getDataFull() async {
     SharedPreferences prefers = await SharedPreferences.getInstance();
     _txtFullName.text = prefers.getString("name") ?? '-';
     _txtAddress.text = prefers.getString("address") ?? '-';
@@ -143,6 +145,9 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: Icon(Icons.person),
               title: Text("My Profile"),
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfilePage()));
+              },
             ),
             ListTile(
               leading: Icon(Icons.file_copy),
